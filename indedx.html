@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BLACK VIP System Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-base: #09090b;
+            --glass-bg: rgba(24, 24, 27, 0.6);
+            --glass-bg-hover: rgba(39, 39, 42, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-highlight: rgba(255, 255, 255, 0.15);
+            --glass-blur: blur(20px);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            
+            --accent-color: #3b82f6;
+            --accent-secondary: #8b5cf6;
+            --accent-glow: rgba(59, 130, 246, 0.25);
+            --accent-subtle: rgba(139, 92, 246, 0.15);
+            
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .bg-particles {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 60%);
+        }
+        .particle {
+            position: absolute; border-radius: 50%;
+            background: #ffffff;
+            animation: twinkle 5s infinite ease-in-out;
+            opacity: 0;
+            box-shadow: 0 0 4px rgba(255,255,255,0.8);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        #toast {
+            position: fixed; top: 24px; left: 50%; transform: translate(-50%, -20px) scale(0.95);
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border); padding: 12px 24px; border-radius: 100px; 
+            font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; 
+            box-shadow: var(--glass-shadow); opacity: 0; pointer-events: none; 
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999;
+        }
+        #toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+
+        .screen { display: none; height: 100vh; width: 100vw; flex-direction: column; }
+        .screen.active { display: flex; animation: fadeScreen 0.4s ease-out; }
+        @keyframes fadeScreen { from { opacity: 0; } to { opacity: 1; } }
+        
+        .glass-panel {
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
+        }
+        
+        .input-wrapper { position: relative; width: 100%; }
+        .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); transition: 0.2s; }
+        .input-field {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            color: var(--text-primary); padding: 14px 16px 14px 42px; border-radius: var(--radius-sm);
+            font-family: var(--font-sans); font-size: 0.95rem; outline: none; transition: 0.3s;
+        }
+        .input-field:focus { border-color: var(--accent-color); background: rgba(0,0,0,0.5); box-shadow: 0 0 15px var(--accent-subtle); }
+        .input-field:focus + i, .input-wrapper:focus-within i { color: var(--accent-color); text-shadow: 0 0 8px var(--accent-glow); }
+
+        select.input-field {
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+            cursor: pointer;
+        }
+        select.input-field option { background: #141416; color: var(--text-primary); }
+
+        textarea.input-field { padding: 14px 16px; resize: vertical; min-height: 80px; }
+
+        .btn {
+            width: 100%; padding: 14px 24px; border-radius: var(--radius-sm); font-weight: 700;
+            font-size: 0.95rem; cursor: pointer; transition: 0.3s; border: 1px solid transparent; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+            position: relative; overflow: hidden;
+        }
+        .btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: translateX(-100%); transition: 0.5s; }
+        .btn:hover::after { transform: translateX(100%); }
+        
+        .btn-primary { background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary)); color: #fff; box-shadow: 0 4px 15px var(--accent-subtle); border: none; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
+        .btn-primary:active { transform: translateY(1px); }
+        
+        .btn-danger { background: var(--danger-bg); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: #fff; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+
+        .btn-warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
+        .btn-warning:hover { background: var(--warning); color: #000; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+
+        .btn-secondary { background: rgba(255,255,255,0.03); color: var(--text-primary); border-color: var(--glass-border); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); border-color: var(--glass-border-highlight); }
+
+        #screen-login { align-items: center; justify-content: center; padding: 20px; }
+        .login-card {
+            border-radius: var(--radius-lg); padding: 48px; width: 100%; max-width: 420px;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            background: linear-gradient(145deg, rgba(25,25,25,0.9) 0%, rgba(5,5,5,0.95) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9), inset 0 1px 2px rgba(255,255,255,0.2);
+            position: relative; overflow: hidden;
+        }
+        .login-card::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-20deg); animation: shine 6s infinite; pointer-events: none;
+        }
+        .login-header { text-align: center; margin-bottom: 36px; }
+        .login-header .logo-icon {
+            width: 72px; height: 72px; background: linear-gradient(135deg, #222, #444);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px; display: inline-flex; align-items: center; justify-content: center;
+            margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.4);
+        }
+        .login-header .logo-icon i { font-size: 32px; color: #fff; }
+        .login-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; color: #fff; }
+        .login-header p { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; }
+
+        .input-group { margin-bottom: 24px; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+
+        .app-layout { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        
+        .sidebar {
+            width: 260px; border-right: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; z-index: 40;
+            background: rgba(10, 5, 20, 0.8); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+        }
+        
+        .sidebar-brand {
+            height: 76px; display: flex; align-items: center; padding: 0 24px;
+            font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; border-bottom: 1px solid var(--glass-border);
+            gap: 12px; color: #fff;
+        }
+        .sidebar-brand i { background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.4rem; }
+        
+        .sidebar-nav { padding: 24px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        
+        .nav-item {
+            display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: var(--radius-sm);
+            color: var(--text-secondary); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: 0.3s; border: 1px solid transparent;
+        }
+        .nav-item:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+        .nav-item.active { color: var(--accent-secondary); background: var(--accent-subtle); border-color: rgba(140, 0, 255, 0.15); box-shadow: inset 4px 0 0 var(--accent-color); }
+        .nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+        
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 8px; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        
+        .topbar {
+            height: 76px; border-bottom: 1px solid var(--glass-border);
+            display: flex; align-items: center; padding: 0 32px; z-index: 30;
+            background: rgba(15, 10, 30, 0.5); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+        }
+        
+        .topbar-brand-mobile { display: none; font-size: 1.25rem; font-weight: 800; align-items: center; gap: 10px; color: #fff; }
+        .topbar-brand-mobile i { color: var(--accent-secondary); font-size: 1.3rem; }
+        
+        .topbar-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+        
+        .status-badge {
+            display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 100px; border: 1px solid rgba(0, 255, 136, 0.3);
+            background: var(--success-bg); color: var(--success); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .status-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite; }
+        
+        .btn-refresh {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-primary);
+            padding: 8px 16px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px; text-transform: uppercase;
+        }
+        .btn-refresh:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); border-color: rgba(255,255,255,0.2); }
+        .btn-refresh i { transition: transform 0.5s ease; }
+        .btn-refresh.spinning i { transform: rotate(180deg); }
+
+        .content-scroll { flex: 1; overflow-y: auto; padding: 32px; }
+        .content-container { max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        .bottom-nav { display: none; }
+
+        .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+        .tab-pane.active { display: block; }
+
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+        .page-header h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; color: #fff; }
+
+        /* ESTILOS DE LA TABLA DE ACCESOS / LOGS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+            padding: 16px 20px; display: flex; flex-direction: column; gap: 6px;
+        }
+        .stat-card .label { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 1.5rem; font-weight: 800; color: #fff; font-family: var(--font-mono); }
+        .stat-card.danger .value { color: var(--danger); }
+        .stat-card.warning .value { color: var(--warning); }
+
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--glass-bg); }
+        .custom-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+        .custom-table th { background: rgba(0,0,0,0.4); padding: 14px 18px; color: var(--text-secondary); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); }
+        .custom-table td { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-primary); vertical-align: middle; }
+        .custom-table tr:last-child td { border-bottom: none; }
+        .custom-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .ip-badge { font-family: var(--font-mono); font-weight: 700; color: var(--accent-color); background: rgba(59,130,246,0.1); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(59,130,246,0.2); display: inline-flex; align-items: center; gap: 6px; }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; }
+        .status-pill.granted { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+        .status-pill.denied { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+        .status-pill.blocked { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+        
+        .search-filter-bar { display: flex; gap: 12px; margin-bottom: 16px; width: 100%; align-items: center; }
+        .search-box { flex: 1; min-width: 0; }
+        .btn-create-key {
+            padding: 0 24px; height: 46px; border-radius: var(--radius-sm); font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary)); color: #fff;
+            border: none; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 15px var(--accent-subtle); flex-shrink: 0; white-space: nowrap; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn-create-key:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
+        .btn-create-key i { font-size: 1.1rem; }
+        @media (max-width: 600px) {
+            .btn-create-key span { display: none; }
+            .btn-create-key { padding: 0; width: 46px; border-radius: 50%; }
+        }
+
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        
+        .card {
+            border-radius: var(--radius-sm); padding: 12px 14px; transition: all 0.2s ease;
+            display: flex; flex-direction: column; gap: 8px;
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border); position: relative; overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .card:hover { 
+            border-color: var(--glass-border-highlight); transform: translateY(-2px); 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            background: var(--glass-bg-hover);
+        }
+        .card.banned { opacity: 0.75; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: center; }
+        .card-title { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; word-break: break-all;}
+        .card-title i.fa-fingerprint { color: var(--accent-color); font-size: 1rem; }
+        
+        .card-badge { padding: 3px 8px; border-radius: 100px; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.5px; border: 1px solid transparent; }
+        .card-badge.active { background: var(--success-bg); color: var(--success); border-color: rgba(16,185,129,0.2); }
+        .card-badge.banned { background: var(--danger-bg); color: var(--danger); border-color: rgba(239,68,68,0.2); }
+
+        .sleek-row { display: flex; flex-wrap: wrap; column-gap: 16px; row-gap: 4px; margin-top: 4px; }
+        .sleek-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-secondary); }
+        .sleek-item i { color: rgba(255,255,255,0.4); font-size: 0.7rem; width: 12px; text-align: center; }
+        .sleek-item strong { color: var(--text-primary); font-weight: 600; }
+        
+        .copy-btn { color: var(--text-secondary); cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .copy-btn:hover { color: var(--accent-secondary); }
+
+        .device-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+        .device-chip { font-family: var(--font-mono); font-size: 0.65rem; background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 4px; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.03); display: flex; align-items: center; gap: 4px; }
+        .device-chip i { font-size: 0.55rem; color: var(--accent-color); }
+
+        .card-actions { display: flex; gap: 6px; margin-top: 4px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .btn-card { flex: 1; padding: 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid transparent; background: transparent; }
+        .btn-card-edit { color: var(--text-primary); border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
+        .btn-card-edit:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .btn-card-reset { color: var(--accent-color); border-color: rgba(59,130,246,0.2); background: rgba(59,130,246,0.1); }
+        .btn-card-reset:hover { background: rgba(59,130,246,0.25); color: #fff; }
+        .btn-card-delete { color: var(--danger); border-color: rgba(239,68,68,0.2); background: var(--danger-bg); }
+        .btn-card-delete:hover { background: rgba(239,68,68,0.2); color: #fff; }
+        .btn-card-ban { color: var(--warning); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.1); }
+        .btn-card-ban:hover { background: rgba(245,158,11,0.2); color: #fff; }
+
+        .form-section { border-radius: var(--radius-lg); padding: 32px; margin-bottom: 24px; }
+        .form-section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 10px; color: #fff; }
+        .form-section-title i { color: var(--accent-secondary); }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+        
+        .toggle-group { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); }
+        .toggle-info strong { display: block; font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; color: #fff; }
+        .toggle-info span { font-size: 0.8rem; color: var(--text-secondary); }
+        
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px; border: 1px solid var(--glass-border); }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #fff; transition: .4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        input:checked + .slider { background-color: var(--accent-color); border-color: var(--accent-color); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .modal-content {
+            border-radius: var(--radius-lg); width: 100%; max-width: 420px; 
+            transform: scale(0.95) translateY(10px); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column; max-height: 90vh;
+            background: var(--bg-base); border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(140,0,255,0.05);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+        
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 1.15rem; font-weight: 700; color: #fff; }
+        .modal-close { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-primary); cursor: pointer; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .modal-close:hover { background: var(--danger); border-color: var(--danger); color: #fff; }
+        
+        .modal-body { padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid var(--glass-border); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+
+        .date-chip {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: var(--text-secondary); font-size: 0.65rem; font-weight: 700;
+            padding: 4px 10px; border-radius: 100px; cursor: pointer; transition: 0.2s;
+        }
+        .date-chip:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
+        .date-chip:active { transform: scale(0.95); }
+        .date-chip.active { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.4); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+
+        /* Estilo para consola de salida dentro del panel */
+        .console-box {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #00ff66;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(0, 255, 136, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); } }
+        @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            
+            .topbar { padding: 0 20px; height: 64px; }
+            .topbar-brand-mobile { display: flex; }
+            .page-header h2 { display: none; }
+            
+            .bottom-nav {
+                display: flex; height: 70px; background: rgba(10, 5, 20, 0.95); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+                border-top: 1px solid var(--glass-border); justify-content: space-around; align-items: center;
+                padding-bottom: env(safe-area-inset-bottom); z-index: 50; flex-shrink: 0;
+            }
+            .bottom-nav-item {
+                flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+                color: var(--text-secondary); font-size: 0.7rem; font-weight: 600; height: 100%;
+                gap: 6px; transition: 0.3s; cursor: pointer;
+            }
+            .bottom-nav-item i { font-size: 1.25rem; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+            .bottom-nav-item.active { color: var(--accent-secondary); }
+            .bottom-nav-item.active i { transform: translateY(-3px); filter: drop-shadow(0 0 10px var(--accent-secondary)); }
+            
+            .content-scroll { padding: 16px; }
+            .btn-refresh span { display: none; }
+            .btn-refresh { padding: 10px; border-radius: 50%; }
+            .data-grid { grid-template-columns: 1fr; }
+            .modal-content { margin: 10px; width: calc(100% - 20px); max-height: calc(100vh - 20px); }
+            .login-card { padding: 32px 24px; }
+            .btn { padding: 16px; } 
+            .input-field { padding: 16px 16px 16px 42px; }
+            .form-grid { grid-template-columns: 1fr; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="bg-particles" id="particles"></div>
+
+    <div id="toast"><i id="toast-icon" class="fas fa-check-circle"></i> <span id="toast-msg">Message</span></div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="screen-login" class="screen active">
+        <div class="glass-panel login-card">
+            <div class="login-header">
+                <div class="logo-icon"><i class="fas fa-fingerprint"></i></div>
+                <h1>BLACK VIP</h1>
+                <p>System Access Terminal</p>
+            </div>
+            
+            <div class="input-group" style="margin-bottom: 32px;">
+                <label>Firebase Realtime DB URL</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-database"></i>
+                    <input type="text" id="auth-url" class="input-field" placeholder="https://your-project.firebaseio.com">
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" id="btn-login" onclick="login()">
+                AUTENTICAR<i class="fas fa-arrow-right" style="margin-left: 4px;"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD APP LAYOUT -->
+    <div id="screen-dashboard" class="screen" style="display: none;">
+        <div class="app-layout">
+            
+            <!-- DESKTOP SIDEBAR -->
+            <aside class="sidebar">
+                <div class="sidebar-brand">
+                    <i class="fas fa-fingerprint"></i> ADM
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-item active" data-tab="keys" onclick="nav('keys')"><i class="fas fa-key"></i> License Keys</div>
+                    <div class="nav-item" data-tab="seguridad" onclick="nav('seguridad')"><i class="fas fa-shield-alt"></i> Ver / Bloquear Accesos</div>
+                    <div class="nav-item" data-tab="config" onclick="nav('config')"><i class="fas fa-cogs"></i> System Settings</div>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="nav-item" data-tab="socios" onclick="nav('socios')"><i class="fas fa-users"></i> Socios & APK</div>
+                    <div class="nav-item" style="color: var(--danger); border-color: rgba(255, 0, 85, 0.2); background: rgba(255, 0, 85, 0.05);" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Terminate Session</div>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT AREA -->
+            <main class="main-content">
+                <!-- Top App Bar -->
+                <header class="topbar">
+                    <div class="topbar-brand-mobile">
+                        <i class="fas fa-fingerprint"></i> BLACK VIP
+                    </div>
+                    <div class="topbar-actions">
+                        <div class="status-badge"><div class="status-dot"></div> LIVE</div>
+                        <button class="btn-refresh" onclick="syncDB()" title="Force Sync">
+                            <i class="fas fa-sync-alt" id="reload-icon"></i> <span>Sync</span>
+                        </button>
+                        <button class="btn-refresh" style="color: var(--danger); border-color: rgba(255,0,85,0.3); display: none;" id="mobile-logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Scrollable Content -->
+                <div class="content-scroll" id="content-scroll">
+                    <div class="content-container">
+                        
+                        <!-- TAB: KEYS -->
+                        <div id="tab-keys" class="tab-pane active">
+                            <div class="page-header"><h2>License Management</h2></div>
+                            <div class="search-filter-bar">
+                                <div class="input-wrapper search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="input-field" id="search-input" placeholder="Buscar key o username..." oninput="renderKeys()">
+                                </div>
+                                <button class="btn-create-key" onclick="openAddKeyModal()"><i class="fas fa-plus-circle"></i> <span>Create Key</span></button>
+                            </div>
+                            <div class="filter-chips" style="display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">
+                                <div class="date-chip active" data-filter="all" onclick="setFilter('all')">TODAS</div>
+                                <div class="date-chip" data-filter="active" onclick="setFilter('active')">ACTIVAS</div>
+                                <div class="date-chip" data-filter="expired" onclick="setFilter('expired')">EXPIRADAS</div>
+                                <div class="date-chip" data-filter="banned" onclick="setFilter('banned')">BANEADAS</div>
+                            </div>
+                            <div class="data-grid" id="list-keys">
+                                <!-- Keys injected here -->
+                            </div>
+                        </div>
+
+                        <!-- TAB: SEGURIDAD Y ACCESOS (ACTUALIZADO CON TABLA E IPS) -->
+                        <div id="tab-seguridad" class="tab-pane">
+                            <div class="page-header"><h2>Monitoreo y Registro de Accesos (IPs)</h2></div>
+                            
+                            <!-- Tarjetas con métricas generales -->
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <span class="label">Total Solicitudes</span>
+                                    <span class="value" id="stat-total-logs">0</span>
+                                </div>
+                                <div class="stat-card danger">
+                                    <span class="label">Intentos Denegados</span>
+                                    <span class="value" id="stat-denied-logs">0</span>
+                                </div>
+                                <div class="stat-card warning">
+                                    <span class="label">IPs Sospechosas</span>
+                                    <span class="value" id="stat-suspicious-ips">0</span>
+                                </div>
+                            </div>
+
+                            <!-- Tabla de Accesos y Registro de IP -->
+                            <div class="glass-panel form-section" style="padding: 24px; margin-bottom: 24px;">
+                                <div class="form-section-title" style="margin-bottom: 16px;">
+                                    <i class="fas fa-network-wired"></i> Tabla de Conexiones e Intentos No Autorizados
+                                </div>
+
+                                <div class="search-filter-bar">
+                                    <div class="input-wrapper search-box">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" class="input-field" id="search-access-logs" placeholder="Filtrar por IP, Usuario o HWID..." oninput="renderAccessLogs()">
+                                    </div>
+                                    <div class="filter-chips" style="display: flex; gap: 8px;">
+                                        <div class="date-chip active" id="filter-log-all" onclick="setLogFilter('all')">TODOS</div>
+                                        <div class="date-chip" id="filter-log-denied" onclick="setLogFilter('denied')">SOLO DENEGADOS</div>
+                                    </div>
+                                </div>
+
+                                <div class="table-wrapper">
+                                    <table class="custom-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Dirección IP</th>
+                                                <th>Usuario / HWID</th>
+                                                <th>Fecha y Hora</th>
+                                                <th>Estado</th>
+                                                <th>Detalle / Intento</th>
+                                                <th style="text-align: right;">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="logs-table-body">
+                                            <!-- Se inyecta con JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Bloque manual de UID/HWID y Consola -->
+                            <div class="form-grid">
+                                <div class="glass-panel form-section" style="margin-bottom:0;">
+                                    <div class="form-section-title"><i class="fas fa-user-slash"></i> Bloquear Acceso Manual</div>
+                                    <div class="input-group">
+                                        <label>UID / HWID / IP del Objetivo</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-id-badge"></i>
+                                            <input type="text" id="sec-uid-block" class="input-field" placeholder="Ej: 192.168.1.1 o 8xK9pL2zY3...">
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Motivo del Bloqueo</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-comment-slash"></i>
+                                            <input type="text" id="sec-reason" class="input-field" placeholder="Uso indebido / Acceso sin permiso">
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; gap:10px;">
+                                        <button class="btn btn-danger" onclick="blockUser()"><i class="fas fa-ban"></i> Bloquear</button>
+                                        <button class="btn btn-warning" onclick="unblockUser()"><i class="fas fa-check"></i> Desbloquear</button>
+                                    </div>
+                                </div>
+
+                                <div class="glass-panel form-section" style="margin-bottom:0;">
+                                    <div class="form-section-title"><i class="fas fa-terminal"></i> Consola de Auditoría</div>
+                                    <div id="sec-console" class="console-box">> Esperando instrucciones de la red...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB: CONFIG -->
+                        <div id="tab-config" class="tab-pane">
+                            <div class="page-header"><h2>System Settings</h2></div>
+                            
+                            <div class="glass-panel form-section">
+                                <div class="form-section-title"><i class="fas fa-database"></i> Firebase Database Connection</div>
+                                <div class="input-group" style="margin-bottom: 16px;">
+                                    <label>Firebase Database Endpoint</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-link"></i>
+                                        <input type="text" id="cfg-firebase-url" class="input-field" placeholder="https://your-project.firebaseio.com">
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" style="max-width: 300px; margin-bottom: 24px;" onclick="changeFirebaseUrl()"><i class="fas fa-sync"></i> Switch / Update Firebase</button>
+
+                                <div class="form-section-title"><i class="fas fa-mobile-alt"></i> APK Identity & Login</div>
+
+                                <div class="form-grid">
+                                    <div class="input-group">
+                                        <label>Nombre de la APK</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-signature"></i>
+                                            <input type="text" id="cfg-app-name" class="input-field" placeholder="BLACK VIP">
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Título del Login</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-heading"></i>
+                                            <input type="text" id="cfg-login-title" class="input-field" placeholder="SYSTEM ACCESS">
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Texto debajo del Login</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-comment-dots"></i>
+                                            <input type="text" id="cfg-login-subtitle" class="input-field" placeholder="System Access Terminal">
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Texto del botón Login</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            <input type="text" id="cfg-login-button" class="input-field" placeholder="AUTHENTICATE">
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>URL del Logo / Icono</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-image"></i>
+                                            <input type="url" id="cfg-logo-url" class="input-field" placeholder="https://.../logo.png">
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Versión de la APK</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-code-branch"></i>
+                                            <input type="text" id="cfg-version" class="input-field" placeholder="1.0.0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-section-title"><i class="fas fa-shield-alt"></i> App Security & Status</div>
+                                
+                                <div class="toggle-group" style="margin-bottom: 16px;">
+                                    <div class="toggle-info">
+                                        <strong>Maintenance Mode</strong>
+                                        <span>Blocks access for all users with a maintenance screen</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="cfg-maintenance">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="toggle-group" style="margin-bottom: 24px;">
+                                    <div class="toggle-info">
+                                        <strong>Force Update Required</strong>
+                                        <span>Forces users to download the latest version</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="cfg-update">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="input-group">
+                                        <label>Dialog Title</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-heading"></i>
+                                            <input type="text" id="cfg-title" class="input-field" placeholder="SYSTEM ACCESS">
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Dialog Subtitle</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-comment-dots"></i>
+                                            <input type="text" id="cfg-subtitle" class="input-field" placeholder="Secure authentication required.">
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Admin Contact URL</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-user-shield"></i>
+                                            <input type="text" id="cfg-admin" class="input-field" placeholder="https://t.me/...">
+                                        </div>
+                                    </div>
+                                    <div class="input-group" style="grid-column: 1 / -1;">
+                                        <label>Allowed App SHA-256</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-fingerprint"></i>
+                                            <input type="text" id="cfg-sha256" class="input-field" placeholder="A40DA80A..." autocomplete="off" spellcheck="false">
+                                        </div>
+                                        <small style="display:block; margin-top:8px; color:var(--text-secondary);">SHA-256 de la firma permitida de la aplicación. Puedes escribirla con o sin dos puntos.</small>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Update Link</label>
+                                        <div class="input-wrapper">
+                                            <i class="fas fa-download"></i>
+                                            <input type="text" id="cfg-updatelink" class="input-field" placeholder="https://t.me/...">
+                                        </div>
+                                    </div>
+                                    <div class="input-group" style="grid-column: 1 / -1;">
+                                        <label>Global Banned HWIDs / IPs (Comma Separated)</label>
+                                        <textarea id="cfg-bans" class="input-field" placeholder="hacker_hwid_001, 192.168.1.1"></textarea>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" style="margin-top: 16px; max-width: 300px;" onclick="saveConfig()"><i class="fas fa-save"></i> Save System Config</button>
+                            </div>
+                        </div>
+
+                        <!-- TAB: SOCIOS -->
+                        <div id="tab-socios" class="tab-pane">
+                            <div class="page-header"><h2>Gestión de Socios y Accesos APK</h2></div>
+                            <div class="search-filter-bar">
+                                <div class="input-wrapper search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="input-field" id="search-socios" placeholder="Buscar socio por nombre, usuario, IP..." oninput="renderSocios()">
+                                </div>
+                                <button class="btn-create-key" onclick="openAddSocioModal()"><i class="fas fa-user-plus"></i> <span>Agregar Socio</span></button>
+                            </div>
+                            <div class="data-grid" id="list-socios">
+                                <!-- Socios injected here -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- MOBILE BOTTOM NAV -->
+                <nav class="bottom-nav">
+                    <div class="bottom-nav-item active" data-tab="keys" onclick="nav('keys')">
+                        <i class="fas fa-key"></i><span>Keys</span>
+                    </div>
+                    <div class="bottom-nav-item" data-tab="seguridad" onclick="nav('seguridad')">
+                        <i class="fas fa-shield-alt"></i><span>Accesos</span>
+                    </div>
+                    <div class="bottom-nav-item" data-tab="config" onclick="nav('config')">
+                        <i class="fas fa-cogs"></i><span>Configuracion</span>
+                    </div>
+                    <div class="bottom-nav-item" data-tab="socios" onclick="nav('socios')">
+                        <i class="fas fa-users"></i><span>Socios</span>
+                    </div>
+                </nav>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: MANAGE KEY -->
+    <div class="modal-overlay" id="modal-key">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="md-title">Crear License Key</h3>
+                <button class="modal-close" onclick="closeModal('modal-key')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin: 0;">License Key</label>
+                        <i class="fas fa-random copy-btn" style="padding: 4px; font-size: 1.1rem; color: var(--accent-secondary);" onclick="generateRandomKey()" title="Randomize"></i>
+                    </div>
+                    <div class="input-wrapper">
+                        <i class="fas fa-key"></i>
+                        <input type="text" id="md-key" class="input-field" style="font-family: var(--font-mono); color: var(--accent-secondary); font-weight: 700;" placeholder="VIP-XXXXXX">
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Username / Alias</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="md-user" class="input-field" placeholder="Client Name">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Device Limit</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-mobile-alt"></i>
+                            <input type="number" id="md-limit" class="input-field" value="1" min="1">
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label style="display: flex; justify-content: space-between; align-items: center;">
+                            Expiry
+                            <div style="display: flex; gap: 4px;">
+                                <span class="date-chip" onclick="addDays(1)">1D</span>
+                                <span class="date-chip" onclick="addDays(7)">7D</span>
+                                <span class="date-chip" onclick="addDays(30)">30D</span>
+                            </div>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="md-date" class="input-field" onclick="try{this.showPicker()}catch(e){}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" style="width: auto;" onclick="closeModal('modal-key')">CANCELAR</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="saveKey()"><i class="fas fa-check"></i> GUARDAR KEY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MANAGE SOCIO -->
+    <div class="modal-overlay" id="modal-socio">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="md-socio-title">Agregar Socio</h3>
+                <button class="modal-close" onclick="closeModal('modal-socio')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Nombre del Socio</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="md-socio-name" class="input-field" placeholder="Nombre completo">
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Usuario del APK (Login)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-lock"></i>
+                        <input type="text" id="md-socio-username" class="input-field" placeholder="Usuario para acceder al APK">
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Plataforma y Contacto</label>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="md-socio-platform" class="input-field" style="width: 130px; padding: 14px 10px;" onchange="updateSocioIcon()">
+                            <option value="Telegram">Telegram</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="Discord">Discord</option>
+                        </select>
+                        <div class="input-wrapper" style="flex: 1;">
+                            <i id="socio-platform-icon" class="fab fa-telegram-plane"></i>
+                            <input type="text" id="md-socio-contact" class="input-field" placeholder="@usuario o número">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Rol / Permisos</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-tag"></i>
+                        <input type="text" id="md-socio-role" class="input-field" placeholder="Ej. Partner, Reseller, Admin">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" style="width: auto;" onclick="closeModal('modal-socio')">CANCELAR</button>
+                <button class="btn btn-primary" style="width: auto;" onclick="saveSocio()"><i class="fas fa-check"></i> GUARDAR SOCIO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        function initParticles() {
+            const container = document.getElementById('particles');
+            for(let i=0; i<40; i++) {
+                let p = document.createElement('div');
+                p.className = 'particle';
+                let size = Math.random() * 2 + 1;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = Math.random() * 100 + 'vh';
+                p.style.animationDuration = (Math.random() * 3 + 2) + 's'; 
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(p);
+            }
+        }
+
+        const Storage = {
+            get: (k) => { try { return localStorage.getItem(k); } catch(e) { return null; } },
+            set: (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} },
+            remove: (k) => { try { localStorage.removeItem(k); } catch(e) {} }
+        };
+
+        let FIREBASE_URL = "";
+        
+        let DB = {
+            holo_vipffree2_Security: {
+                App_Status: {
+                    Admin_URL: "", Allowed_SHA256: "", Banned_Devices: "", Dialog_Subtitle: "", Dialog_Title: "SYSTEM ACCESS", Maintenance: false, Update_Link: "", Update_Required: false,
+                    App_Name: "BLACK VIP", Login_Title: "BLACK VIP", Login_Subtitle: "System Access Terminal", Login_Button: "AUTHENTICATE", Logo_URL: "", App_Version: "1.0.0"
+                },
+                Keys: {},
+                Socios: {},
+                Blocked_Users: {},
+                Access_Logs: {} // Estructura añadida para almacenar los accesos
+            }
+        };
+        
+        let EDITING_KEY_ID = null;
+        let EDITING_SOCIO_ID = null;
+        let LOG_FILTER = 'all';
+
+        window.onload = () => {
+            initParticles();
+            const savedUrl = Storage.get('alarako_url');
+            
+            if(savedUrl) {
+                document.getElementById('auth-url').value = savedUrl;
+                login();
+            }
+            checkMobileLogout();
+        };
+        
+        window.onresize = checkMobileLogout;
+        function checkMobileLogout() {
+            document.getElementById('mobile-logout').style.display = (window.innerWidth <= 768) ? 'flex' : 'none';
+        }
+
+        function showToast(msg, type="success") {
+            const t = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            
+            t.style.borderColor = type === 'danger' ? 'var(--danger)' : 'var(--accent-secondary)';
+            t.style.boxShadow = type === 'danger' ? '0 0 20px rgba(255, 0, 85, 0.4)' : '0 0 20px var(--accent-glow)';
+            
+            icon.className = type === 'danger' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+            icon.style.color = type === 'danger' ? 'var(--danger)' : 'var(--success)';
+            
+            document.getElementById('toast-msg').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function writeConsole(msg) {
+            const time = new Date().toLocaleTimeString();
+            const consoleBox = document.getElementById('sec-console');
+            consoleBox.innerText = `[${time}] ${msg}\n` + consoleBox.innerText;
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            if (screenId === 'screen-dashboard') document.getElementById('screen-dashboard').style.display = 'flex';
+        }
+
+        function nav(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(v => v.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll(`[data-tab="${tabId}"]`).forEach(n => n.classList.add('active'));
+            
+            document.getElementById('content-scroll').scrollTo(0,0);
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function copyToClipboard(text, msg = "Copied") {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(msg);
+            }).catch(err => {
+                const el = document.innerHTML = text;
+                showToast(msg);
+            });
+        }
+
+        function formatFirebaseUrl(raw) {
+            let url = raw.trim().replace(/\/+$/, "").replace(/\.json$/i, "");
+            if(!url) return "";
+            if(!url.startsWith('http')) url = 'https://' + url;
+            if(!url.includes('.firebaseio.com') && !url.includes('firebasedatabase.app')) url = `https://${url.replace('https://','').replace('http://','')}.firebaseio.com`;
+            return url;
+        }
+
+        async function login() {
+            const btn = document.getElementById('btn-login');
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> AUTHENTICATING...`;
+            btn.disabled = true;
+
+            let urlInput = formatFirebaseUrl(document.getElementById('auth-url').value);
+            
+            if(!urlInput) { showToast("Enter Firebase URL", "danger"); resetLoginBtn(); return; }
+            
+            FIREBASE_URL = urlInput;
+            
+            try {
+                const res = await fetch(`${FIREBASE_URL}/.json`);
+                if(!res.ok) throw new Error("Connection Failed");
+                const data = await res.json();
+                
+                if(data && data.holo_vipffree2_Security) {
+                    DB = data;
+                    if(!DB.holo_vipffree2_Security.Keys) DB.holo_vipffree2_Security.Keys = {};
+                    if(!DB.holo_vipffree2_Security.App_Status) DB.holo_vipffree2_Security.App_Status = {};
+                    if(!DB.holo_vipffree2_Security.Socios) DB.holo_vipffree2_Security.Socios = {};
+                    if(!DB.holo_vipffree2_Security.Blocked_Users) DB.holo_vipffree2_Security.Blocked_Users = {};
+                    if(!DB.holo_vipffree2_Security.Access_Logs) DB.holo_vipffree2_Security.Access_Logs = {};
+                } else {
+                    await pushToFirebase(true);
+                }
+                
+                Storage.set('alarako_url', FIREBASE_URL);
+                switchScreen('screen-dashboard');
+                refreshUI();
+            } catch(e) {
+                Storage.remove('alarako_url');
+                showToast("Connection Denied", "danger");
+            }
+            resetLoginBtn();
+        }
+
+        function resetLoginBtn() {
+            const btn = document.getElementById('btn-login');
+            btn.innerHTML = `AUTHENTICATE <i class="fas fa-arrow-right" style="margin-left: 4px;"></i>`;
+            btn.disabled = false;
+        }
+
+        async function syncDB() {
+            const btn = document.querySelector('.btn-refresh');
+            btn.classList.add('spinning');
+            try {
+                const res = await fetch(`${FIREBASE_URL}/.json`);
+                if(!res.ok) throw new Error();
+                const data = await res.json();
+                if(data && data.holo_vipffree2_Security) {
+                    DB = data;
+                    if(!DB.holo_vipffree2_Security.Keys) DB.holo_vipffree2_Security.Keys = {};
+                    if(!DB.holo_vipffree2_Security.App_Status) DB.holo_vipffree2_Security.App_Status = {};
+                    if(!DB.holo_vipffree2_Security.Socios) DB.holo_vipffree2_Security.Socios = {};
+                    if(!DB.holo_vipffree2_Security.Blocked_Users) DB.holo_vipffree2_Security.Blocked_Users = {};
+                    if(!DB.holo_vipffree2_Security.Access_Logs) DB.holo_vipffree2_Security.Access_Logs = {};
+                }
+                refreshUI();
+                showToast("System Synced");
+            } catch(e) { showToast("Sync Error", "danger"); }
+            setTimeout(() => btn.classList.remove('spinning'), 500);
+        }
+
+        async function pushToFirebase(silent = false) {
+            try {
+                const res = await fetch(`${FIREBASE_URL}/holo_vipffree2_Security.json`, {
+                    method: 'PUT', headers: { "Content-Type": "application/json" }, body: JSON.stringify(DB.holo_vipffree2_Security)
+                });
+                if(!res.ok) throw new Error();
+            } catch(e) { if(!silent) showToast("Write Error", "danger"); }
+        }
+
+        function logout() {
+            Storage.remove('alarako_url');
+            location.reload();
+        }
+
+        function refreshUI() {
+            renderKeys();
+            renderSocios();
+            populateConfig();
+            renderAccessLogs();
+            applyLocalAppPreview();
+        }
+
+        // --- RENDERIZADO Y LÓGICA DE TABLA DE IPS / LOGS DE ACCESO ---
+
+        function setLogFilter(filter) {
+            LOG_FILTER = filter;
+            document.getElementById('filter-log-all').classList.toggle('active', filter === 'all');
+            document.getElementById('filter-log-denied').classList.toggle('active', filter === 'denied');
+            renderAccessLogs();
+        }
+
+        function renderAccessLogs() {
+            const tbody = document.getElementById('logs-table-body');
+            const search = (document.getElementById('search-access-logs')?.value || '').toLowerCase();
+            tbody.innerHTML = '';
+
+            let logsObj = DB.holo_vipffree2_Security.Access_Logs || {};
+            
+            // Si la base de datos no tiene un nodo de logs aun, simulamos o leemos de Socios / Claves para rellenar
+            let logsList = [];
+
+            Object.keys(logsObj).forEach(id => {
+                logsList.push({ id, ...logsObj[id] });
+            });
+
+            // Si está vacío, rellenar con accesos desde la tabla de Socios/Keys
+            if(logsList.length === 0) {
+                const socios = DB.holo_vipffree2_Security.Socios || {};
+                Object.keys(socios).forEach((id, idx) => {
+                    const s = socios[id];
+                    if(s.IP && s.IP !== 'Sin registrar') {
+                        logsList.push({
+                            id: 'sys-log-' + idx,
+                            ip: s.IP,
+                            user: s.Username || s.Name,
+                            time: new Date().toLocaleString(),
+                            status: s.Banned ? 'Blocked' : 'Granted',
+                            detail: s.Banned ? 'Acceso bloqueado por administración' : 'Login exitoso desde APK'
+                        });
+                    }
+                });
+            }
+
+            let totalCount = logsList.length;
+            let deniedCount = 0;
+            let suspiciousIps = new Set();
+
+            let filteredLogs = logsList.filter(log => {
+                const ipStr = (log.ip || '').toLowerCase();
+                const userStr = (log.user || '').toLowerCase();
+                const isDenied = log.status === 'Denied' || log.status === 'Blocked' || log.status === 'Banned';
+
+                if(isDenied) {
+                    deniedCount++;
+                    if(log.ip) suspiciousIps.add(log.ip);
+                }
+
+                if(LOG_FILTER === 'denied' && !isDenied) return false;
+
+                return ipStr.includes(search) || userStr.includes(search);
+            });
+
+            // Actualizar tarjetas de estadística
+            document.getElementById('stat-total-logs').innerText = totalCount;
+            document.getElementById('stat-denied-logs').innerText = deniedCount;
+            document.getElementById('stat-suspicious-ips').innerText = suspiciousIps.size;
+
+            if(filteredLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 24px; color: var(--text-secondary);">No hay registros de IP o intentos no autorizados para mostrar.</td></tr>`;
+                return;
+            }
+
+            filteredLogs.reverse().forEach(log => {
+                const isDenied = log.status === 'Denied';
+                const isBlocked = log.status === 'Blocked' || log.status === 'Banned';
+                
+                let pillClass = 'status-pill granted';
+                let statusLabel = 'PERMITIDO';
+                
+                if(isDenied) {
+                    pillClass = 'status-pill denied';
+                    statusLabel = 'DENEGADO / SIN PERMISO';
+                } else if(isBlocked) {
+                    pillClass = 'status-pill blocked';
+                    statusLabel = 'BLOQUEADO';
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div class="ip-badge">
+                                <i class="fas fa-globe"></i> ${log.ip || '0.0.0.0'}
+                                <i class="fas fa-copy copy-btn" onclick="copyToClipboard('${log.ip}')"></i>
+                            </div>
+                        </td>
+                        <td><strong>${log.user || 'Desconocido'}</strong></td>
+                        <td style="color: var(--text-secondary); font-size: 0.8rem;">${log.time || 'Reciente'}</td>
+                        <td><span class="${pillClass}">${statusLabel}</span></td>
+                        <td style="color: var(--text-secondary);">${log.detail || 'Intento de ingreso'}</td>
+                        <td style="text-align: right;">
+                            <button class="btn-card btn-card-ban" style="display:inline-flex; width:auto; padding:4px 10px;" onclick="quickBlockIp('${log.ip}', '${log.user}')">
+                                <i class="fas fa-ban"></i> Bloquear IP
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function quickBlockIp(ip, user) {
+            if(!ip || ip === '0.0.0.0') return showToast("IP no válida", "danger");
+            document.getElementById('sec-uid-block').value = ip;
+            document.getElementById('sec-reason').value = `Entrada no permitida - Usuario: ${user}`;
+            blockUser();
+        }
+
+        // --- BLOQUEO Y SEGURIDAD ---
+        function blockUser() {
+            const uid = document.getElementById('sec-uid-block').value.trim();
+            const reason = document.getElementById('sec-reason').value.trim() || "Violación de términos / Acceso sin permiso";
+
+            if(!uid) return showToast("Ingresa una IP o UID válido", "danger");
+
+            if(!DB.holo_vipffree2_Security.Blocked_Users) DB.holo_vipffree2_Security.Blocked_Users = {};
+
+            DB.holo_vipffree2_Security.Blocked_Users[uid] = {
+                blocked: true,
+                reason: reason,
+                date: new Date().toISOString()
+            };
+
+            // También agregar a los Banned_Devices globales si parece IP o HWID
+            let currentBans = DB.holo_vipffree2_Security.App_Status.Banned_Devices || "";
+            if(!currentBans.includes(uid)) {
+                DB.holo_vipffree2_Security.App_Status.Banned_Devices = currentBans ? `${currentBans}, ${uid}` : uid;
+            }
+
+            pushToFirebase();
+            writeConsole(`ACCESO BLOQUEADO: Se añadió [${uid}] a la lista negra. Motivo: ${reason}`);
+            showToast("IP / Usuario Bloqueado", "danger");
+            refreshUI();
+        }
+
+        function unblockUser() {
+            const uid = document.getElementById('sec-uid-block').value.trim();
+            if(!uid) return showToast("Ingresa un UID o IP", "danger");
+
+            if(DB.holo_vipffree2_Security.Blocked_Users && DB.holo_vipffree2_Security.Blocked_Users[uid]) {
+                delete DB.holo_vipffree2_Security.Blocked_Users[uid];
+                
+                // Remover de Banned_Devices
+                let currentBans = DB.holo_vipffree2_Security.App_Status.Banned_Devices || "";
+                let bansArr = currentBans.split(',').map(s => s.trim()).filter(s => s !== uid);
+                DB.holo_vipffree2_Security.App_Status.Banned_Devices = bansArr.join(', ');
+
+                pushToFirebase();
+                writeConsole(`DESBLOQUEO REALIZADO: [${uid}] removido de la lista negra.`);
+                showToast("Desbloqueado exitosamente");
+                refreshUI();
+            } else {
+                writeConsole(`INFORMACIÓN: El objetivo [${uid}] no figura en el registro.`);
+            }
+        }
+
+        let CURRENT_FILTER = 'all';
+        function setFilter(filter) {
+            CURRENT_FILTER = filter;
+            document.querySelectorAll('.filter-chips .date-chip').forEach(c => {
+                c.classList.toggle('active', c.dataset.filter === filter);
+            });
+            renderKeys();
+        }
+
+        function renderKeys() {
+            const list = document.getElementById('list-keys');
+            const search = document.getElementById('search-input').value.toLowerCase();
+            list.innerHTML = '';
+            
+            const keysObj = DB.holo_vipffree2_Security.Keys || {};
+            const keyIds = Object.keys(keysObj);
+
+            let visibleCount = 0;
+
+            keyIds.forEach(keyId => {
+                const data = keysObj[keyId];
+                const user = data.Username || "Unknown";
+                
+                if(!user.toLowerCase().includes(search) && !keyId.toLowerCase().includes(search)) return;
+
+                const isBanned = data.Banned === true;
+                
+                let isExpired = false;
+                if(data.ExpiryDate) {
+                    const parts = data.ExpiryDate.split('-');
+                    if(parts.length === 3) {
+                        const expDate = new Date(parts[0], parts[1]-1, parts[2]);
+                        expDate.setHours(23,59,59,999);
+                        isExpired = expDate < new Date();
+                    }
+                }
+                
+                if(CURRENT_FILTER === 'banned' && !isBanned) return;
+                if(CURRENT_FILTER === 'active' && (isBanned || isExpired)) return;
+                if(CURRENT_FILTER === 'expired' && (!isExpired || isBanned)) return;
+                
+                visibleCount++;
+
+                const cardClass = isBanned ? 'card banned' : 'card';
+                const badgeClass = isBanned ? 'card-badge banned' : (isExpired ? 'card-badge banned' : 'card-badge active');
+                const badgeText = isBanned ? 'BANEADA' : (isExpired ? 'EXPIRADA' : 'ACTIVA');
+                
+                let devicesHtml = '';
+                let deviceCount = 0;
+                if(data.Devices) {
+                    Object.keys(data.Devices).forEach(hw => {
+                        if(hw !== 'dummy') {
+                            deviceCount++;
+                            devicesHtml += `<div class="device-chip"><i class="fas fa-microchip"></i> ${hw.substring(0,8)}</div>`;
+                        }
+                    });
+                }
+
+                list.innerHTML += `
+                    <div class="${cardClass}">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-fingerprint"></i>
+                                <span>${keyId}</span>
+                                <i class="fas fa-copy copy-btn" style="margin-left: 4px;" onclick="copyToClipboard('${keyId}', 'Key Copied')"></i>
+                            </div>
+                            <div class="${badgeClass}">${badgeText}</div>
+                        </div>
+
+                        <div class="sleek-row">
+                            <div class="sleek-item"><i class="fas fa-user"></i> <strong>${user}</strong></div>
+                            <div class="sleek-item"><i class="fas fa-calendar-alt"></i> <strong>${data.ExpiryDate || "Never"}</strong></div>
+                            <div class="sleek-item"><i class="fas fa-mobile-alt"></i> <strong>${deviceCount} / ${data.DeviceLimit || 1}</strong></div>
+                        </div>
+                        
+                        ${deviceCount > 0 ? `<div class="device-chips">${devicesHtml}</div>` : ''}
+
+                        <div class="card-actions">
+                            <button class="btn-card btn-card-edit" onclick="editKey('${keyId}')"><i class="fas fa-pen"></i> Edit</button>
+                            <button class="btn-card btn-card-reset" onclick="resetKeyDevices('${keyId}')"><i class="fas fa-redo"></i> Reset</button>
+                            <button class="btn-card ${isBanned ? 'btn-card-edit' : 'btn-card-ban'}" onclick="toggleBan('${keyId}')">
+                                <i class="fas ${isBanned ? 'fa-check-circle' : 'fa-ban'}"></i> ${isBanned ? 'Unban' : 'Ban'}
+                            </button>
+                            <button class="btn-card btn-card-delete" onclick="deleteKey('${keyId}')"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (visibleCount === 0) {
+                list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px; font-weight: 600;"><i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 16px; opacity: 0.5; display: block;"></i> No se encontraron keys.</div>`;
+            }
+        }
+
+        function generateRandomKey() {
+            const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('md-key').value = `VIP-${rand}`;
+        }
+
+        function addDays(days) {
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            document.getElementById('md-date').value = date.toISOString().split('T')[0];
+        }
+
+        function openAddKeyModal() {
+            EDITING_KEY_ID = null;
+            document.getElementById('md-title').innerText = "Create License Key";
+            generateRandomKey();
+            document.getElementById('md-user').value = "";
+            document.getElementById('md-limit').value = "1";
+            document.getElementById('md-key').disabled = false;
+            addDays(30);
+            openModal('modal-key');
+        }
+
+        function editKey(keyId) {
+            EDITING_KEY_ID = keyId;
+            const data = DB.holo_vipffree2_Security.Keys[keyId];
+            document.getElementById('md-title').innerText = "Editar License Key";
+            document.getElementById('md-key').value = keyId;
+            document.getElementById('md-key').disabled = true;
+            document.getElementById('md-user').value = data.Username || "";
+            document.getElementById('md-limit').value = data.DeviceLimit || "1";
+            document.getElementById('md-date').value = data.ExpiryDate || "";
+            openModal('modal-key');
+        }
+
+        function resetKeyDevices(keyId) {
+            if(confirm(`Reset device registrations for ${keyId}?`)) {
+                if(DB.holo_vipffree2_Security.Keys[keyId]) {
+                    DB.holo_vipffree2_Security.Keys[keyId].Devices = { dummy: 0 };
+                    pushToFirebase();
+                    refreshUI();
+                    showToast("Key Devices Reset");
+                }
+            }
+        }
+
+        function saveKey() {
+            const keyId = document.getElementById('md-key').value.trim();
+            const user = document.getElementById('md-user').value.trim();
+            const limit = parseInt(document.getElementById('md-limit').value) || 1;
+            const expiry = document.getElementById('md-date').value;
+            
+            if(!keyId || !user) return showToast("Key and Username required", "danger");
+            
+            if(!DB.holo_vipffree2_Security.Keys[keyId]) {
+                DB.holo_vipffree2_Security.Keys[keyId] = { Devices: { dummy: 0 }, Banned: false };
+            }
+            
+            const target = DB.holo_vipffree2_Security.Keys[keyId];
+            target.Username = user;
+            target.DeviceLimit = limit;
+            target.ExpiryDate = expiry;
+            
+            if(target.Devices) {
+                const keys = Object.keys(target.Devices);
+                if(keys.length > 1 && keys.includes('dummy')) delete target.Devices['dummy'];
+                if(keys.length === 0) target.Devices['dummy'] = 0;
+            } else {
+                target.Devices = { dummy: 0 };
+            }
+            
+            pushToFirebase();
+            closeModal('modal-key');
+            refreshUI();
+            showToast("Key Saved Successfully");
+        }
+
+        function toggleBan(keyId) {
+            const target = DB.holo_vipffree2_Security.Keys[keyId];
+            target.Banned = !target.Banned;
+            pushToFirebase(true);
+            refreshUI();
+            if(target.Banned) showToast(`${keyId} Banned`, "danger");
+            else showToast(`${keyId} Unbanned`);
+        }
+
+        function deleteKey(keyId) {
+            if(confirm(`Delete license key ${keyId}?`)) {
+                delete DB.holo_vipffree2_Security.Keys[keyId];
+                pushToFirebase(); 
+                refreshUI(); 
+                showToast("Key Deleted", "danger");
+            }
+        }
+
+        function populateConfig() {
+            const app = DB.holo_vipffree2_Security.App_Status || {};
+            document.getElementById('cfg-firebase-url').value = FIREBASE_URL;
+            document.getElementById('cfg-maintenance').checked = app.Maintenance === true;
+            document.getElementById('cfg-update').checked = app.Update_Required === true;
+            document.getElementById('cfg-title').value = app.Dialog_Title || "";
+            document.getElementById('cfg-subtitle').value = app.Dialog_Subtitle || "";
+            document.getElementById('cfg-admin').value = app.Admin_URL || "";
+            document.getElementById('cfg-sha256').value = app.Allowed_SHA256 || "";
+            document.getElementById('cfg-updatelink').value = app.Update_Link || "";
+            document.getElementById('cfg-bans').value = app.Banned_Devices || "";
+            document.getElementById('cfg-app-name').value = app.App_Name || "";
+            document.getElementById('cfg-login-title').value = app.Login_Title || "";
+            document.getElementById('cfg-login-subtitle').value = app.Login_Subtitle || "";
+            document.getElementById('cfg-login-button').value = app.Login_Button || "";
+            document.getElementById('cfg-logo-url').value = app.Logo_URL || "";
+            document.getElementById('cfg-version').value = app.App_Version || "";
+        }
+
+        function changeFirebaseUrl() {
+            const newUrl = formatFirebaseUrl(document.getElementById('cfg-firebase-url').value);
+            if(!newUrl) return showToast("Enter a valid Firebase URL", "danger");
+            document.getElementById('auth-url').value = newUrl;
+            login();
+        }
+
+        function saveConfig() {
+            if(!DB.holo_vipffree2_Security.App_Status) DB.holo_vipffree2_Security.App_Status = {};
+            const app = DB.holo_vipffree2_Security.App_Status;
+            
+            app.Maintenance = document.getElementById('cfg-maintenance').checked;
+            app.Update_Required = document.getElementById('cfg-update').checked;
+            app.Dialog_Title = document.getElementById('cfg-title').value.trim();
+            app.Dialog_Subtitle = document.getElementById('cfg-subtitle').value.trim();
+            app.Admin_URL = document.getElementById('cfg-admin').value.trim();
+            app.Allowed_SHA256 = document.getElementById('cfg-sha256').value
+                .replace(/:/g, '')
+                .replace(/\s/g, '')
+                .toUpperCase();
+            app.Update_Link = document.getElementById('cfg-updatelink').value.trim();
+            app.Banned_Devices = document.getElementById('cfg-bans').value.trim();
+            app.App_Name = document.getElementById('cfg-app-name').value.trim();
+            app.Login_Title = document.getElementById('cfg-login-title').value.trim();
+            app.Login_Subtitle = document.getElementById('cfg-login-subtitle').value.trim();
+            app.Login_Button = document.getElementById('cfg-login-button').value.trim();
+            app.Logo_URL = document.getElementById('cfg-logo-url').value.trim();
+            app.App_Version = document.getElementById('cfg-version').value.trim();
+            app.Dialog_Title = app.Login_Title || app.Dialog_Title;
+            app.Dialog_Subtitle = app.Login_Subtitle || app.Dialog_Subtitle;
+            
+            pushToFirebase();
+            showToast("System Configuration Saved");
+        }
+
+        function applyLocalAppPreview() {
+            const app = DB.holo_vipffree2_Security.App_Status || {};
+            document.title = app.App_Name || "BLACK VIP";
+            const h1 = document.querySelector('.login-header h1');
+            const p = document.querySelector('.login-header p');
+            const b = document.getElementById('btn-login');
+            const logo = document.querySelector('.login-header .logo-icon');
+            if (h1) h1.textContent = app.Login_Title || app.App_Name || "BLACK VIP";
+            if (p) p.textContent = app.Login_Subtitle || "System Access Terminal";
+            if (b) b.innerHTML = `${app.Login_Button || "AUTHENTICATE"} <i class="fas fa-arrow-right" style="margin-left: 4px;"></i>`;
+            if (logo && app.Logo_URL) {
+                logo.innerHTML = `<img src="${app.Logo_URL.replace(/"/g,'&quot;')}" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:22px;">`;
+            }
+        }
+
+        // --- SOCIOS MANAGEMENT ---
+
+        function updateSocioIcon() {
+            const platform = document.getElementById('md-socio-platform').value;
+            const iconEl = document.getElementById('socio-platform-icon');
+            if (platform === 'WhatsApp') {
+                iconEl.className = 'fab fa-whatsapp';
+            } else if (platform === 'Discord') {
+                iconEl.className = 'fab fa-discord';
+            } else {
+                iconEl.className = 'fab fa-telegram-plane';
+            }
+        }
+
+        function renderSocios() {
+            const list = document.getElementById('list-socios');
+            const search = document.getElementById('search-socios').value.toLowerCase();
+            list.innerHTML = '';
+
+            const sociosObj = DB.holo_vipffree2_Security.Socios || {};
+            const socioIds = Object.keys(sociosObj);
+            let count = 0;
+
+            socioIds.forEach(id => {
+                const socio = sociosObj[id];
+                const name = socio.Name || "Socio";
+                const username = socio.Username || name.toLowerCase().replace(/\s+/g, '');
+                const contact = socio.Contact || "N/A";
+                const platform = socio.Platform || "Telegram";
+                const role = socio.Role || "Socio";
+                const ip = socio.IP || "Sin IP registrada";
+                const hwid = socio.HWID || "Sin Dispositivo";
+                const isBanned = socio.Banned === true;
+
+                if(!name.toLowerCase().includes(search) && !username.toLowerCase().includes(search) && !contact.toLowerCase().includes(search) && !ip.toLowerCase().includes(search)) return;
+                count++;
+
+                let platformIcon = 'fab fa-telegram-plane';
+                if (platform === 'WhatsApp') platformIcon = 'fab fa-whatsapp';
+                if (platform === 'Discord') platformIcon = 'fab fa-discord';
+
+                const cardClass = isBanned ? 'card banned' : 'card';
+                const badgeClass = isBanned ? 'card-badge banned' : 'card-badge active';
+                const badgeText = isBanned ? 'BLOQUEADO' : role.toUpperCase();
+
+                list.innerHTML += `
+                    <div class="${cardClass}">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-user-shield"></i>
+                                <span>${name}</span>
+                            </div>
+                            <div class="${badgeClass}">${badgeText}</div>
+                        </div>
+
+                        <div class="sleek-row">
+                            <div class="sleek-item">
+                                <i class="fas fa-user-lock"></i> 
+                                <span>User: <strong>${username}</strong></span>
+                            </div>
+                            <div class="sleek-item">
+                                <i class="${platformIcon}"></i> 
+                                <strong>${platform}: ${contact}</strong>
+                            </div>
+                            <div class="sleek-item">
+                                <i class="fas fa-network-wired"></i> 
+                                <span>IP: <strong>${ip}</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="device-chips">
+                            <div class="device-chip"><i class="fas fa-microchip"></i> HWID: ${hwid.substring(0, 12)}</div>
+                        </div>
+
+                        <div class="card-actions">
+                            <button class="btn-card btn-card-edit" onclick="editSocio('${id}')"><i class="fas fa-pen"></i> Editar</button>
+                            <button class="btn-card ${isBanned ? 'btn-card-edit' : 'btn-card-ban'}" onclick="toggleBanSocio('${id}')">
+                                <i class="fas ${isBanned ? 'fa-check-circle' : 'fa-ban'}"></i> ${isBanned ? 'Desbloquear' : 'Bloquear'}
+                            </button>
+                            <button class="btn-card btn-card-reset" onclick="resetSocioIP('${id}')" title="Borrar IP de la APK"><i class="fas fa-wifi"></i> Reset IP</button>
+                            <button class="btn-card btn-card-delete" onclick="deleteSocio('${id}')"><i class="fas fa-trash"></i> Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (count === 0) {
+                list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px; font-weight: 600;"><i class="fas fa-users-slash" style="font-size: 2rem; margin-bottom: 16px; opacity: 0.5; display: block;"></i> No se encontraron socios</div>`;
+            }
+        }
+
+        function openAddSocioModal() {
+            EDITING_SOCIO_ID = null;
+            document.getElementById('md-socio-title').innerText = "Agregar Socio";
+            document.getElementById('md-socio-name').value = "";
+            document.getElementById('md-socio-username').value = "";
+            document.getElementById('md-socio-platform').value = "Telegram";
+            document.getElementById('md-socio-contact').value = "";
+            document.getElementById('md-socio-role').value = "";
+            updateSocioIcon();
+            openModal('modal-socio');
+        }
+
+        function editSocio(id) {
+            EDITING_SOCIO_ID = id;
+            const socio = DB.holo_vipffree2_Security.Socios[id];
+            document.getElementById('md-socio-title').innerText = "Editar Socio";
+            document.getElementById('md-socio-name').value = socio.Name || "";
+            document.getElementById('md-socio-username').value = socio.Username || "";
+            document.getElementById('md-socio-platform').value = socio.Platform || "Telegram";
+            document.getElementById('md-socio-contact').value = socio.Contact || "";
+            document.getElementById('md-socio-role').value = socio.Role || "";
+            updateSocioIcon();
+            openModal('modal-socio');
+        }
+
+        function saveSocio() {
+            const name = document.getElementById('md-socio-name').value.trim();
+            const username = document.getElementById('md-socio-username').value.trim() || name.toLowerCase().replace(/\s+/g, '');
+            const platform = document.getElementById('md-socio-platform').value;
+            const contact = document.getElementById('md-socio-contact').value.trim();
+            const role = document.getElementById('md-socio-role').value.trim() || "Partner";
+
+            if(!name) return showToast("Nombre requerido", "danger");
+
+            if(!DB.holo_vipffree2_Security.Socios) DB.holo_vipffree2_Security.Socios = {};
+
+            const id = EDITING_SOCIO_ID ? EDITING_SOCIO_ID : "SOCIO-" + Date.now();
+            
+            const existingData = DB.holo_vipffree2_Security.Socios[id] || {};
+
+            DB.holo_vipffree2_Security.Socios[id] = {
+                Name: name,
+                Username: username,
+                Platform: platform,
+                Contact: contact,
+                Role: role,
+                IP: existingData.IP || "Sin registrar",
+                HWID: existingData.HWID || "Sin registrar",
+                Banned: existingData.Banned === true
+            };
+
+            pushToFirebase();
+            closeModal('modal-socio');
+            renderSocios();
+            showToast("Socio Guardado");
+        }
+
+        function toggleBanSocio(id) {
+            const socio = DB.holo_vipffree2_Security.Socios[id];
+            if (!socio) return;
+            
+            socio.Banned = !socio.Banned;
+            
+            pushToFirebase(true);
+            renderSocios();
+            
+            if(socio.Banned) {
+                showToast(`Socio ${socio.Name} BLOQUEADO de la APK`, "danger");
+            } else {
+                showToast(`Socio ${socio.Name} DESBLOQUEADO`);
+            }
+        }
+
+        function resetSocioIP(id) {
+            const socio = DB.holo_vipffree2_Security.Socios[id];
+            if (!socio) return;
+
+            if(confirm(`¿Limpiar IP y HWID registrados de ${socio.Name}?`)) {
+                socio.IP = "Sin registrar";
+                socio.HWID = "Sin registrar";
+                pushToFirebase();
+                renderSocios();
+                showToast("IP / Dispositivo Reseteados");
+            }
+        }
+
+        function deleteSocio(id) {
+            if(confirm("¿Eliminar este socio y revocar su acceso total a la APK?")) {
+                delete DB.holo_vipffree2_Security.Socios[id];
+                pushToFirebase();
+                renderSocios();
+                showToast("Socio Eliminado", "danger");
+            }
+        }
+    </script>
+
+<script>
+/* ===== APK REMOTE CONTROLS =====
+   Firebase structure:
+   App_Status/{App_Name, App_Version, Login_Title, Login_Subtitle, Login_Button, Logo_URL}
+   APK_Buttons/{buttonId}/{Name, URL, Enabled, Order}
+*/
+let apkRemoteButtons = [];
+
+function apkFirebaseRoot() {
+  if (typeof db !== 'undefined') return db;
+  if (typeof database !== 'undefined') return database;
+  return null;
+}
+
+function addAPKButton(data = {}) {
+  apkRemoteButtons.push({
+    id: data.id || ('button_' + Date.now() + '_' + Math.floor(Math.random()*1000)),
+    Name: data.Name || data.name || 'Nuevo botón',
+    URL: data.URL || data.url || '',
+    Enabled: data.Enabled !== false && data.enabled !== false,
+    Order: Number(data.Order || data.order || (apkRemoteButtons.length + 1))
+  });
+  renderAPKButtons();
+}
+
+function removeAPKButton(id) {
+  apkRemoteButtons = apkRemoteButtons.filter(b => b.id !== id);
+  renderAPKButtons();
+}
+
+function renderAPKButtons() {
+  const box = document.getElementById('apk-buttons-list');
+  if (!box) return;
+  if (!apkRemoteButtons.length) {
+    box.innerHTML = '<div style="opacity:.65;padding:12px 0">No hay botones. Pulsa “+ Agregar botón”.</div>';
+    return;
+  }
+  box.innerHTML = apkRemoteButtons.map((b, i) => `
+    <div class="form-grid" data-apk-button="${b.id}" style="margin-bottom:12px;padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:10px">
+      <div class="form-group">
+        <label>Texto</label>
+        <input type="text" value="${escapeAPKHtml(b.Name)}"
+          onchange="updateAPKButton('${b.id}','Name',this.value)">
+      </div>
+      <div class="form-group">
+        <label>URL</label>
+        <input type="url" value="${escapeAPKHtml(b.URL)}"
+          onchange="updateAPKButton('${b.id}','URL',this.value)">
+      </div>
+      <div class="form-group">
+        <label>Orden</label>
+        <input type="number" value="${Number(b.Order)||i+1}" min="1"
+          onchange="updateAPKButton('${b.id}','Order',this.value)">
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:8px">
+        <input type="checkbox" ${b.Enabled ? 'checked' : ''}
+          onchange="updateAPKButton('${b.id}','Enabled',this.checked)">
+        <label style="margin:0">Mostrar en la APK</label>
+      </div>
+      <button type="button" class="btn btn-danger" onclick="removeAPKButton('${b.id}')">Eliminar</button>
+    </div>
+  `).join('');
+}
+
+function updateAPKButton(id, key, value) {
+  const b = apkRemoteButtons.find(x => x.id === id);
+  if (!b) return;
+  b[key] = key === 'Order' ? Number(value || 1) : value;
+}
+
+function escapeAPKHtml(value) {
+  return String(value ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function loadAPKRemoteConfig() {
+  const root = apkFirebaseRoot();
+  if (!root) return;
+
+  try {
+    const snap = await root.ref('App_Status').once('value');
+    const c = snap.val() || {};
+    const set = (id, v) => { const el=document.getElementById(id); if(el) el.value=v ?? ''; };
+    set('apk-ctrl-name', c.App_Name || '');
+    set('apk-ctrl-version', c.App_Version || '');
+    set('apk-ctrl-login-title', c.Login_Title || c.Dialog_Title || '');
+    set('apk-ctrl-login-subtitle', c.Login_Subtitle || c.Dialog_Subtitle || '');
+    set('apk-ctrl-login-button', c.Login_Button || '');
+    set('apk-ctrl-logo', c.Logo_URL || '');
+
+    const bs = await root.ref('APK_Buttons').once('value');
+    const raw = bs.val() || {};
+    apkRemoteButtons = Object.entries(raw).map(([id,v]) => ({
+      id, Name:v?.Name || '', URL:v?.URL || '', Enabled:v?.Enabled !== false,
+      Order:Number(v?.Order || 1)
+    })).sort((a,b)=>a.Order-b.Order);
+    renderAPKButtons();
+  } catch(e) {
+    console.error('APK remote config:', e);
+  }
+}
+
+async function saveAPKRemoteConfig() {
+  const root = apkFirebaseRoot();
+  if (!root) {
+    alert('No se encontró la conexión Firebase del panel.');
+    return;
+  }
+
+  const updates = {};
+  updates['App_Status/App_Name'] = document.getElementById('apk-ctrl-name')?.value || '';
+  updates['App_Status/App_Version'] = document.getElementById('apk-ctrl-version')?.value || '';
+  updates['App_Status/Login_Title'] = document.getElementById('apk-ctrl-login-title')?.value || '';
+  updates['App_Status/Login_Subtitle'] = document.getElementById('apk-ctrl-login-subtitle')?.value || '';
+  updates['App_Status/Login_Button'] = document.getElementById('apk-ctrl-login-button')?.value || '';
+  updates['App_Status/Logo_URL'] = document.getElementById('apk-ctrl-logo')?.value || '';
+
+  const oldSnap = await root.ref('APK_Buttons').once('value');
+  const old = oldSnap.val() || {};
+  Object.keys(old).forEach(id => { updates['APK_Buttons/' + id] = null; });
+
+  apkRemoteButtons.forEach((b,i) => {
+    updates['APK_Buttons/' + b.id] = {
+      Name: b.Name || '',
+      URL: b.URL || '',
+      Enabled: !!b.Enabled,
+      Order: Number(b.Order || i+1)
+    };
+  });
+
+  try {
+    await root.ref().update(updates);
+    alert('Configuración de la APK guardada en Firebase.');
+  } catch(e) {
+    console.error(e);
+    alert('No se pudo guardar: ' + (e.message || e));
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderAPKButtons();
+  setTimeout(loadAPKRemoteConfig, 800);
+});
+</script>
+
+</body>
+</html>
