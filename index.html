@@ -227,7 +227,7 @@
           return;
         }
 
-        const expiry = record.ExpiryTimestamp || Date.parse(record.ExpiryDate);
+        const expiry = Date.parse(record.ExpiryDate);
         const isExpired = Number.isFinite(expiry) && expiry <= Date.now();
         const isBlocked = record.Banned === true || String(record.Status || '').toLowerCase() === 'banned';
         const isReset = record.Reset === true || record.ForceReset === true || record.ResetAt;
@@ -282,7 +282,7 @@
 
       return Object.values(keys).some(record => {
         if (!record || record.Banned === true || record.Status === 'banned') return false;
-        const expiry = Number(record.ExpiryTimestamp) || Date.parse(record.ExpiryDate);
+        const expiry = Date.parse(record.ExpiryDate);
         if (!Number.isFinite(expiry) || expiry <= now) return false;
         const storedIp = record.IP || record.ip || record.Ip || record.ipAddress;
         const storedDevice = record.DeviceId || record.deviceId || record.IDDispositivo || record.idDispositivo;
@@ -302,8 +302,9 @@
       const record = {
         Username: 'HOLO BLACK VIP',
         DeviceLimit: 1,
+        // La APK valida únicamente este campo.
+        // Contiene fecha y hora exactas en formato ISO 8601.
         ExpiryDate: expiry,
-        ExpiryTimestamp: new Date(expiry).getTime(),
         Devices: { dummy: 0 },
         Banned: false,
         CreatedAt: new Date().toISOString(),
